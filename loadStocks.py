@@ -5,7 +5,6 @@ import numpy as np
 
 DF_SET = []
 DF_OBJ = []
-STOCKS = pd.DataFrame()
 DIR_STOCKS = 'stocks/'
 
 #Check if stocks already exist on disk to reduce API calls
@@ -33,10 +32,9 @@ def load_tickers_df(ticker_names, display = "objects"):
         
         if display == "grid":
             df[str(i)] = df['Close']
-            df.drop(df.columns.difference([str(i)]), 1, inplace=True)
+            df.drop(df.columns.difference(['Close']), 1, inplace=True)
         else:
             df['asset'] = i
-            
         DF_SET.append(df)
     if display == "grid":
         return pd.concat(DF_SET, axis = 1)
