@@ -18,6 +18,7 @@ def fetch_quotes_yf(ticker):
     price_df.to_csv(DIR_STOCKS + str(ticker))
     return price_df
 
+#test
 # display is the way how the data will be bundled.
 # display = {"APPEND", "GRID", "OBJECTS"}
 def load_tickers_df(ticker_names, display = "objects"):
