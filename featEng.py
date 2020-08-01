@@ -15,7 +15,7 @@ QUOTE_DF = []
 def pricePredictionFeatureEng40(df):
     #assuming we recieve a 2 column df, date and price
     df.sort_values(by='Date',ascending=True)
-    df = df.rename(columns={1: 'Close'})
+    #df = df.rename(columns={1: 'Close'})
     df['1d_abs'] = df['Close'].diff(1)
     df['1d_dir'] = np.where((df['1d_abs'] <= 0), 0, 1)
     df['2d_abs'] = df['Close'].diff(2)
@@ -33,5 +33,6 @@ def pricePredictionFeatureEng40(df):
     df['50d_ma'] = df['Close'].rolling(window=50).mean()
     df['100d_ma'] = df['Close'].rolling(window=100).mean()
     df['200d_ma'] = df['Close'].rolling(window=200).mean()
+    #df['Volume'] = df['Volume'] / 100
     df = df.iloc[200:]
     return df

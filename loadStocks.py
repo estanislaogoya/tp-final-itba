@@ -14,12 +14,11 @@ def stock_dir_exists():
 
 #If file does not exist, then fetch using yahoo finance
 def fetch_quotes_yf(ticker):
-    price_df = pd.DataFrame(yf.Ticker(str(ticker)).history(period="10y"), columns=['Open','High','Low','Close','Volume'])            
+    price_df = pd.DataFrame(yf.Ticker(str(ticker)).history(period="10y"), columns=['Open','High','Low','Close','Volume'])
     price_df.to_csv(DIR_STOCKS + str(ticker))
     return price_df
 
-
-# display is the way how the data will be bundled. 
+# display is the way how the data will be bundled.
 # display = {"APPEND", "GRID", "OBJECTS"}
 def load_tickers_df(ticker_names, display = "objects"):
     stock_dir_exists()
@@ -29,9 +28,9 @@ def load_tickers_df(ticker_names, display = "objects"):
             df = fetch_quotes_yf(i)
         else:
             df = pd.read_csv(ticker_filename)
-        
+
         if display == "grid":
-            df[str(i)] = df['Close']
+            #pass
             df.drop(df.columns.difference(['Close']), 1, inplace=True)
         else:
             df['asset'] = i
