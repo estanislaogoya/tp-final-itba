@@ -41,7 +41,6 @@ class ModelProcessorTF():
   X_test = []
   y_train = []
   y_test = []
-  LOOK_WINDOW = -365
 
   def apply_model(self, model_param=None):
     if model_param is not None:
@@ -52,7 +51,7 @@ class ModelProcessorTF():
     history = self.model.fit(
         self.X_train,
         self.y_train,
-        epochs=500
+        epochs=15
     )
     print("Evaluate on test data")
     results = self.model.evaluate(self.X_test, self.y_test, batch_size=128)
@@ -72,11 +71,6 @@ class ModelProcessorTF():
     #df_test_x_y.to_csv("predictions.csv")
 
   def __init__(self, df):
-    df['future_price'] = df.loc[:, 'Close'].shift(self.LOOK_WINDOW)
-
-    #Drop the n amount of rows, as they are empty
-    df.drop(df.tail(abs(self.LOOK_WINDOW)).index,inplace=True)
-
     target = df.pop('future_price')
     self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(df,
                                                     target,
