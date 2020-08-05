@@ -19,6 +19,7 @@ def putFuturePriceAndDeleteEmptyRows(df):
 
     #Drop the n amount of rows, as they are empty
     df.drop(df.tail(abs(LOOK_WINDOW)).index,inplace=True)
+    df = df.reset_index(drop=True)
     return df
 
 
@@ -27,7 +28,7 @@ def pricePredictionFeatureEng40(df):
     df.sort_values(by='Date',ascending=True)
     #df = df.rename(columns={1: 'Close'})
     df['1d_abs'] = df['Close'].diff(1)
-    df['1d_dir'] = np.where((df['1d_abs'] <= 0), 0, 1)
+    df['1d_dir'] = np.where((df['1d_abs'] <= 0), 0, 1).astype(np.float64)
     df['2d_abs'] = df['Close'].diff(2)
     df['1d_cls'] = df['Close'].shift(1)
     df['2d_cls'] = df['Close'].shift(2)
@@ -39,6 +40,8 @@ def pricePredictionFeatureEng40(df):
     df['8d_cls'] = df['Close'].shift(8)
     df['9d_cls'] = df['Close'].shift(9)
     df['10d_cls'] = df['Close'].shift(10)
+    df.drop(['Volume'], axis=1)
+    #df['Volume'] = (df['Volume']/10000).astype(np.float64)
     #moving average indicators
     df['50d_ma'] = df['Close'].rolling(window=50).mean()
     df['100d_ma'] = df['Close'].rolling(window=100).mean()
@@ -58,16 +61,14 @@ class StockDataFrame():
 
 class DataframHandler():
 #Breakdowns appended DataFrame and returns each object individually with FE applied to it
-    objects = []
-    fe_objects = []
-
-    def df_breakdown(self, df_group):
-        for _, group in df_group.groupby('asset'):
-            self.objects.append(StockDataFrame(group.drop(['asset'], axis=1), group['asset'].iloc[0]))
-        return self.objects
-
     def __init__(self, df, fe_method=None):
-        for n in self.df_breakdown(df):
+        self.objects = []
+        self.fe_objects = []
+
+        for _, group in df.groupby('asset'):
+            self.objects.append(StockDataFrame(group.drop(['asset'], axis=1), group['asset'].iloc[0]))
+
+        for n in self.objects:
             if fe_method is None:
                 fe_output = pricePredictionFeatureEng40(n.data)
             else:
