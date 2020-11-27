@@ -145,7 +145,8 @@ class ModelHandler():
                                                     random_state=42)
     self.tf_model = get_tf_adam_mse_3l_10_20_1_relu()
     self.apply_tf_model()
-    self.apply_randomforest_model()
-    self.apply_lasso_model()
+    #self.apply_randomforest_model()
+    #self.apply_lasso_model()
+
 
     return None

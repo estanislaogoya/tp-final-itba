@@ -50,6 +50,18 @@ def pricePredictionFeatureEng40(df):
     df = df.iloc[200:]
     return df
 
+def getHistoricReturns(df):
+    #assuming we recieve a 2 column df, date and price
+    df.sort_values(by='Date',ascending=True)
+    df['365_log_ret'] = np.log(df['Close']/df['Close'].shift(365))
+    df['365_price_ago'] = df['Close'].shift(365)
+    df.drop(['Volume'], axis=1)
+    #df['Volume'] = (df['Volume']/10000).astype(np.float64)
+    #moving average indicators
+    #df['Volume'] = df['Volume'] / 100
+    df = df.iloc[365:]
+    return df
+
 class StockDataFrame():
     name = ""
     data = []
@@ -59,7 +71,7 @@ class StockDataFrame():
         self.data = df
         return None
 
-class DataframHandler():
+class DataframeHandler():
 #Breakdowns appended DataFrame and returns each object individually with FE applied to it
     def __init__(self, df, fe_method=None):
         self.objects = []
