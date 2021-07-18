@@ -7,6 +7,8 @@ DF_SET = []
 DF_OBJ = []
 DIR_STOCKS = 'stocks/'
 
+#adding text
+
 #Check if stocks already exist on disk to reduce API calls
 def stock_dir_exists():
     if not os.path.exists(DIR_STOCKS):
