@@ -5,7 +5,7 @@ import numpy as np
 
 DF_SET = []
 DF_OBJ = []
-DIR_STOCKS = 'stocks/'
+DIR_STOCKS = 'data/stocks/'
 
 #adding text
 

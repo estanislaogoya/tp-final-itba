@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+import featEng as fe
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
+from keras import backend as K
 
 def get_tf_adam_mse_3l_10_20_1_relu():
   tf.keras.backend.set_floatx('float64')
@@ -34,14 +35,12 @@ def get_tf_adam_mse_5l_1024_512_256_128_1_relu():
   return model
 
 class ModelProcessorTF():
-
   model = get_tf_adam_mse_3l_10_20_1_relu()
-  df_test_x_y = []
   X_train = []
-  X_test = []
   y_train = []
-  y_test = []
-  LOOK_WINDOW = -365
+  X_test = []
+  y_test= []
+  df_test_x_y = []
 
   def apply_model(self, model_param=None):
     if model_param is not None:
@@ -49,6 +48,8 @@ class ModelProcessorTF():
 
     df_test_x_y = []
     print("Fit model on training data")
+    print (self.X_train)
+    print (self.y_train)
     history = self.model.fit(
         self.X_train,
         self.y_train,
@@ -68,18 +69,11 @@ class ModelProcessorTF():
     predictions = pd.Series(my_list)
 
     self.df_test_x_y['predictions'] = predictions.values
+    self.df_test_x_y['error_perc'] = (self.df_test_x_y['predictions']-self.df_test_x_y['future_price'])/self.df_test_x_y['future_price']
 
-    #df_test_x_y.to_csv("predictions.csv")
+    self.df_test_x_y.to_csv("predictions.csv")
 
   def __init__(self, df):
-    df['future_price'] = df.loc[:, 'Close'].shift(self.LOOK_WINDOW)
-
-    #Drop the n amount of rows, as they are empty
-    df.drop(df.tail(abs(self.LOOK_WINDOW)).index,inplace=True)
-
-    target = df.pop('future_price')
-    self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(df,
-                                                    target,
-                                                    test_size=0.33,
-                                                    random_state=42)
+    K.clear_session()
+    self.X_train, self.X_test, self.y_train, self.y_test = fe.splittingForTraining(df)
     return self.apply_model()
